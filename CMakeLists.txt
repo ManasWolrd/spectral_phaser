@@ -126,33 +126,26 @@ else()
 
     if(NOT IPP_FOUND)
         if(WIN32)
-            set(MY_IPP_ROOT "$ENV{USERPROFILE}/.nuget/packages/intelipp.static.win-x64/2022.3.0.387")
-            set(IPP_INCLUDE_DIRS "${MY_IPP_ROOT}/build/native/include")
-            set(IPP_LIBRARIES 
-                "${MY_IPP_ROOT}/build/native/win-x64/ippsmt.lib"
-                "${MY_IPP_ROOT}/build/native/win-x64/ippcoremt.lib"
-                "${MY_IPP_ROOT}/build/native/win-x64/ippvmmt.lib"
-                "${MY_IPP_ROOT}/build/native/win-x64/ippsimt.lib"
-            )
+            set(IPP_ROOT "$ENV{USERPROFILE}/.nuget/packages/intelipp.static.win-x64/2022.3.0.387")
+            set(IPP_INC "${IPP_ROOT}/build/native/include/ipp")
+            set(IPP_LIB "${IPP_ROOT}/build/native/win-x64/")
+            set(IPP_LIBS ippsmt ippcoremt ippimt ippcvmt ippvmmt)
         elseif(UNIX)
-            set(MY_IPP_ROOT "/opt/intel/oneapi/ipp/latest")
-            set(IPP_INCLUDE_DIRS "${MY_IPP_ROOT}/include")
-            set(IPP_LIBRARIES 
-                "${MY_IPP_ROOT}/lib/intel64/libipps.a"
-                "${MY_IPP_ROOT}/lib/intel64/libippcore.a"
-                "${MY_IPP_ROOT}/lib/intel64/libippvm.a"
-            )
+            set(IPP_ROOT "/opt/intel/oneapi/ipp/latest")
+            set(IPP_INC "${IPP_ROOT}/include")
+            set(IPP_LIBS ipps ippcore ippi ippcv ippvm)
         endif()
 
-        if(EXISTS "${IPP_INCLUDE_DIRS}")
+        if(EXISTS "${IPP_INC}")
             set(IPP_FOUND TRUE)
         endif()
     endif()
 
     if(IPP_FOUND)
         message(STATUS "AudioFFT: Using Intel IPP")
-        target_include_directories(audiofft PRIVATE ${IPP_INCLUDE_DIRS})
-        target_link_libraries(audiofft PRIVATE ${IPP_LIBRARIES})
+        target_include_directories(audiofft PRIVATE ${IPP_INC})
+        target_link_libraries(audiofft PRIVATE ${IPP_LIBS})
+        target_link_directories(audiofft PRIVATE ${IPP_LIB})
         target_compile_definitions(audiofft PUBLIC AUDIOFFT_INTEL_IPP)
     else()
         message(WARNING "AudioFFT: IPP not found, using default Ooura implementation")
