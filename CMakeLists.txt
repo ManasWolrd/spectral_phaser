@@ -110,7 +110,22 @@ if(APPLE)
     target_compile_definitions(${PROJECT_NAME} PUBLIC JUCE_AU=1)
 endif()
 
+# ----------------------------------------
 # audiofft
+# ----------------------------------------
 add_library(audiofft STATIC libs/AudioFFT/AudioFFT.cpp)
 target_include_directories(audiofft PUBLIC libs/AudioFFT)
 target_link_libraries(${PROJECT_NAME} PRIVATE audiofft)
+# fft lib for audio fft
+if(APPLE)
+    # use vDSP
+    target_link_libraries(audiofft PRIVATE "-framework Accelerate")
+    target_compile_definitions(audiofft PRIVATE AUDIOFFT_APPLE_ACCELERATE)
+else()
+    # use intel IPP
+    find_package(IPP)
+    if(IPP_FOUND)
+        target_link_libraries(audiofft PRIVATE ${IPP_LIBRARIES})
+        target_compile_definitions(audiofft PRIVATE AUDIOFFT_INTEL_IPP)
+    endif()
+endif()
