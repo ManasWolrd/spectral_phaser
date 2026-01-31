@@ -18,6 +18,8 @@ PluginUi::PluginUi(EmptyAudioProcessor& p)
     addAndMakeVisible(pitch_);
     addAndMakeVisible(phase_);
     addAndMakeVisible(morph_);
+    addAndMakeVisible(freq_);
+    phasy_.BindParam(*p.value_tree_, "phasy");
     addAndMakeVisible(phasy_);
 
     phaser_layer_.Set(0);
@@ -47,6 +49,7 @@ void PluginUi::resized() {
         pitch_.setBounds(line.removeFromLeft(50));
         phase_.setBounds(line.removeFromLeft(50));
         morph_.setBounds(line.removeFromLeft(50));
+        freq_.setBounds(line.removeFromLeft(50));
     }
 }
 
@@ -58,4 +61,5 @@ void PluginUi::OnLayerSelect(size_t i) {
     pitch_.BindParam(*processor_.value_tree_, "pitch" + juce::String{i});
     phase_.BindParam(*processor_.value_tree_, "phase" + juce::String{i});
     morph_.BindParam(*processor_.value_tree_, "morph" + juce::String{i});
+    freq_.BindParam(*processor_.value_tree_, "freq" + juce::String{i});
 }

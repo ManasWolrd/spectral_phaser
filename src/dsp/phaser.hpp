@@ -30,10 +30,13 @@ public:
         }
     }
 
-    void Update(float fs, float fft_size) noexcept {
+    void Update(float fs, float fft_size, float hop_size) noexcept {
         float freq = 440.0f * std::exp2((pitch - 69.0f) / 12.0f);
         float bins = freq / fs * fft_size;
         space_ = Warp(bins);
+
+        barber_phase_ += barber_freq * hop_size / fs;
+        barber_phase_ -= std::floor(barber_phase_);
     }
 
     float pitch{};
@@ -41,6 +44,7 @@ public:
     float phase{};
     bool enable{};
     bool cascade{};
+    float barber_freq{};
 private:
     float Warp(float x) noexcept {
         float lin = x;
@@ -65,11 +69,13 @@ private:
     float GetGain(size_t i, float phi, float cycle) noexcept {
         float flange_phase = Warp(static_cast<float>(i)) / cycle;
         flange_phase += phi;
+        flange_phase += barber_phase_;
         flange_phase -= std::floor(flange_phase);
         return SinReaktor(flange_phase) * 0.5f + 0.5f;
     }
 
     float space_{};
+    float barber_phase_{};
 };
 
 class SpectralPhaser {
@@ -104,7 +110,7 @@ public:
 
     void Update() noexcept {
         for (auto& layer : layers_) {
-            layer.Update(fs_, static_cast<float>(kFftSize));
+            layer.Update(fs_, static_cast<float>(kFftSize), kHopSize);
         }
     }
 

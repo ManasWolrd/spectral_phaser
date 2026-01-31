@@ -34,6 +34,13 @@ EmptyAudioProcessor::EmptyAudioProcessor()
             layout.add(std::move(p));
         }
         {
+            auto p = std::make_unique<juce::AudioParameterFloat>(
+                juce::ParameterID{"freq" + i_str, 1}, "freq" + i_str,
+                juce::NormalisableRange<float>{-10.0f, 10.0f, 0.01f, 0.4f, true}, 0.0f);
+            param_listener_.Add(p, [this, idx = i](float v) { dsp_.GetLayer(idx).barber_freq = v; });
+            layout.add(std::move(p));
+        }
+        {
             auto p = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{"enable" + i_str, 1},
                                                                 "enable" + i_str, i == 0);
             param_listener_.Add(p, [this, idx = i](bool v) { dsp_.GetLayer(idx).enable = v; });
