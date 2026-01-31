@@ -1,25 +1,12 @@
-# plugin template
-或许是吧, visual studio/vs code/clion直接打开这个文件夹等cmake配置就行了.  
-
-推荐使用Ninja Multi-Config和clang/GCC编译器, 优化比MSVC好很多.  
-
-# 克隆到本地
-```bash
-git clone --recurse-submodules https://github.com/L-MODEL-TEST/l-model-plugin-template.git
-```
-或者
-```bash
-git clone https://github.com/L-MODEL-TEST/l-model-plugin-template.git
-cd l-model-plugin-template
-git submodule update --init --recursive
-```
+# spectral phaser
+spectral phaser  
 
 ## MacOS授权
 
 ```bash
-sudo xattr -dr com.apple.quarantine /path/to/your/plugins/plugin_name.component
-sudo xattr -dr com.apple.quarantine /path/to/your/plugins/plugin_name.vst3
-sudo xattr -dr com.apple.quarantine /path/to/your/plugins/plugin_name.lv2
+sudo xattr -dr com.apple.quarantine /path/to/your/plugins/spectral_phaser.component
+sudo xattr -dr com.apple.quarantine /path/to/your/plugins/spectral_phaser.vst3
+sudo xattr -dr com.apple.quarantine /path/to/your/plugins/spectral_phaser.lv2
 ```
 ## 构建
 
