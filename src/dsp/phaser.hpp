@@ -14,10 +14,19 @@ public:
     void ProcessFft(float* re, float* im, size_t num_bins) noexcept {
         if (!enable) return;
 
-        for (size_t i = 0; i < num_bins; ++i) {
-            float g = GetGain(i, phase, space_);
-            re[i] *= g;
-            im[i] *= g;
+        if (cascade) {
+            for (size_t i = 0; i < num_bins; ++i) {
+                float g = GetGain(i, phase, space_);
+                re[i] *= g;
+                im[i] *= g;
+            }
+        }
+        else {
+            for (size_t i = 0; i < num_bins; ++i) {
+                float g = GetGain(i, phase, space_);
+                re[i] += g * re[i];
+                im[i] += g * im[i];
+            }
         }
     }
 
@@ -31,6 +40,7 @@ public:
     float morph{};
     float phase{};
     bool enable{};
+    bool cascade{};
 private:
     float Warp(float x) noexcept {
         float lin = x;

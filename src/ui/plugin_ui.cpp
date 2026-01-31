@@ -14,6 +14,7 @@ PluginUi::PluginUi(EmptyAudioProcessor& p)
     phaser_layer_.on_value_changed = [this](size_t i) { OnLayerSelect(i); };
 
     addAndMakeVisible(enable_);
+    addAndMakeVisible(cascade_);
     addAndMakeVisible(pitch_);
     addAndMakeVisible(phase_);
     addAndMakeVisible(morph_);
@@ -42,6 +43,7 @@ void PluginUi::resized() {
     {
         auto line = b.removeFromTop(65);
         enable_.setBounds(line.removeFromLeft(30).withSizeKeepingCentre(30, 30).reduced(2, 2));
+        cascade_.setBounds(line.removeFromLeft(60).withSizeKeepingCentre(60, 30).reduced(2, 2));
         pitch_.setBounds(line.removeFromLeft(50));
         phase_.setBounds(line.removeFromLeft(50));
         morph_.setBounds(line.removeFromLeft(50));
@@ -52,6 +54,7 @@ void PluginUi::paint(juce::Graphics& g) {}
 
 void PluginUi::OnLayerSelect(size_t i) {
     enable_.BindParam(*processor_.value_tree_, "enable" + juce::String{i});
+    cascade_.BindParam(*processor_.value_tree_, "cascade" + juce::String{i});
     pitch_.BindParam(*processor_.value_tree_, "pitch" + juce::String{i});
     phase_.BindParam(*processor_.value_tree_, "phase" + juce::String{i});
     morph_.BindParam(*processor_.value_tree_, "morph" + juce::String{i});

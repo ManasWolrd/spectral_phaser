@@ -39,6 +39,12 @@ EmptyAudioProcessor::EmptyAudioProcessor()
             param_listener_.Add(p, [this, idx = i](bool v) { dsp_.GetLayer(idx).enable = v; });
             layout.add(std::move(p));
         }
+        {
+            auto p = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{"cascade" + i_str, 1},
+                                                                "cascade" + i_str, true);
+            param_listener_.Add(p, [this, idx = i](bool v) { dsp_.GetLayer(idx).cascade = v; });
+            layout.add(std::move(p));
+        }
     }
     {
         auto p = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{"phasy", 1}, "phasy", false);

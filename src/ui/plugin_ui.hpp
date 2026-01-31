@@ -21,7 +21,8 @@ private:
     pluginshared::PresetPanel preset_;
     ui::CubeSelector phaser_layer_;
 
-    ui::Switch enable_{"⚡"};
+    ui::Switch enable_{"⭘"};
+    ui::Switch cascade_{"cascade", "paralle"};
     ui::Dial pitch_{"pitch"};
     ui::Dial phase_{"phase"};
     ui::Dial morph_{"morph"};
