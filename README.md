@@ -1,6 +1,12 @@
 # spectral phaser
 spectral phaser  
 
+## todo
+  - [ ] add another type of phasy using random gain.  
+  - [ ] bpm sync frequency
+  - [ ] option to clear barber phase
+  - [ ] adjust notch waveform
+
 ## MacOS授权
 
 ```bash
