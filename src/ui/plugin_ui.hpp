@@ -7,16 +7,21 @@ class EmptyAudioProcessor;
 
 class PluginUi : public juce::Component {
 public:
-    static constexpr int kWidth = 480;
-    static constexpr int kHeight = 320;
+    static constexpr int kWidth = 320;
+    static constexpr int kHeight = 200;
 
     explicit PluginUi(EmptyAudioProcessor& p);
 
     void resized() override;
     void paint(juce::Graphics& g) override;
 private:
-    pluginshared::PresetPanel preset_;
+    void OnLayerSelect(size_t i);
 
+    EmptyAudioProcessor& processor_;
+    pluginshared::PresetPanel preset_;
+    ui::CubeSelector phaser_layer_;
+
+    ui::Switch enable_{"⚡"};
     ui::Dial pitch_{"pitch"};
     ui::Dial phase_{"phase"};
     ui::Dial morph_{"morph"};

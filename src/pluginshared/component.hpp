@@ -146,7 +146,7 @@ public:
         {
             g.setColour (juce::Colours::black);
         }
-        
+
         g.setFont (getMenuBarFont (menuBar, itemIndex, itemText));
         g.drawFittedText (itemText, 0, 0, width, height, juce::Justification::centredLeft, 1);
     }
@@ -335,6 +335,7 @@ public:
 
     void BindParam(juce::RangedAudioParameter* param) {
         jassert(param != nullptr);
+        attach_ = nullptr;
         attach_ = std::make_unique<juce::SliderParameterAttachment>(
             *param, slider
         );
@@ -407,6 +408,7 @@ public:
 
     void BindParam(juce::RangedAudioParameter* param) {
         jassert(param != nullptr);
+        attach_ = nullptr;
         attach_ = std::make_unique<juce::SliderParameterAttachment>(
             *param, slider
         );
@@ -453,8 +455,8 @@ public:
 
             g.setColour(juce::Colours::black);
             g.drawRect(getLocalBounds());
-        } 
-        
+        }
+
         juce::String title;
     private:
         CubeSelector& parent_;
@@ -472,9 +474,10 @@ public:
 
     std::span<std::unique_ptr<Cube>> BindParam(juce::AudioParameterChoice* param, bool add_choices) {
         jassert(param != nullptr);
+        attach_ = nullptr;
         attach_ = std::make_unique<juce::ParameterAttachment>(
             *param, [this](float v) {
-                OnValueChanged(v);
+                OnValueChanged(static_cast<size_t>(v));
             }
         );
 
@@ -510,13 +513,27 @@ public:
     std::vector<std::unique_ptr<Cube>>& GetAllCubes() noexcept {
         return cubes_;
     }
+
+    void Set(size_t i) {
+        OnValueChanged(i);
+    }
+
+    std::function<void(size_t)> on_value_changed;
 private:
-    void OnValueChanged(float v) {
+    void OnValueChanged(size_t v) {
         size_t idx = static_cast<size_t>(v);
         auto old_one = selecting_;
         selecting_ = cubes_[idx].get();
         if (old_one) old_one->repaint();
         selecting_->repaint();
+
+        if (on_value_changed) {
+            on_value_changed(idx);
+        }
+
+        if (attach_ != nullptr) {
+            attach_->setValueAsCompleteGesture(static_cast<float>(v));
+        }
     }
 
     void mouseDown(juce::MouseEvent const& e) override {
@@ -524,7 +541,7 @@ private:
 
         for (size_t i = 0; i < cubes_.size(); ++i) {
             if (e.originalComponent == cubes_[i].get()) {
-                attach_->setValueAsCompleteGesture(static_cast<float>(i));
+                OnValueChanged(i);
                 break;
             }
         }
@@ -566,6 +583,7 @@ public:
 
     void BindParam(juce::RangedAudioParameter* param) {
         jassert(param != nullptr);
+        attach_ = nullptr;
         attach_ = std::make_unique<juce::ButtonParameterAttachment>(
             *param, *this
         );
@@ -638,6 +656,7 @@ public:
 
     void BindParam(juce::AudioParameterChoice* param) {
         jassert(param != nullptr);
+        attach_ = nullptr;
 
         clear();
         addItemList(param->choices, 1);
