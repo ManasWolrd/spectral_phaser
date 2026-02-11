@@ -1,12 +1,12 @@
 #pragma once
-#include <span>
-#include <juce_gui_basics/juce_gui_basics.h>
 #include <juce_audio_processors/juce_audio_processors.h>
+#include <juce_gui_basics/juce_gui_basics.h>
+#include <span>
 
 namespace ui {
 
 // #99a196 live9的浅绿色，亮度90
-static juce::Colour const green_bg{153,161,150};
+static juce::Colour const green_bg{153, 161, 150};
 // #c1cac2 live9的下拉框何滑块背景
 static juce::Colour const light_green_bg{193, 202, 194};
 // #161820 live9的图表黑色背景
@@ -18,16 +18,15 @@ static juce::Colour const dial_fore{204, 81, 0};
 // #c6cd00 live9的开关背景，黄绿色
 static juce::Colour const active_bg{198, 205, 0};
 // #778592 live9开关关闭背景，灰色
-static juce::Colour const inactive_bg{119,133,146};
+static juce::Colour const inactive_bg{119, 133, 146};
 // #f5b126 live9的滑块前景，橙色
-static juce::Colour const orange_fore{0xf5,0xb1,0x26};
+static juce::Colour const orange_fore{0xf5, 0xb1, 0x26};
 
 // ---------------------------------------- dial ----------------------------------------
 class CustomLookAndFeel : public juce::LookAndFeel_V4 {
 public:
     void drawRotarySlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos,
-        const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider&) override
-    {
+                          const float rotaryStartAngle, const float rotaryEndAngle, juce::Slider&) override {
         // Radius of knob
         auto radius = juce::jmin(static_cast<float>(width) / 2.0f, static_cast<float>(height) / 2.0f) - 3.0f;
         // Centre point (centreX, centreY) of knob
@@ -43,12 +42,14 @@ public:
         juce::Path backgroundArc;
         backgroundArc.addCentredArc(centreX, centreY, radius, radius, 0.0f, rotaryStartAngle, rotaryEndAngle, true);
         g.setColour(black_bg);
-        g.strokePath(backgroundArc, juce::PathStrokeType(thickness, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+        g.strokePath(backgroundArc,
+                     juce::PathStrokeType(thickness, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
         // Draw path of slider foreground (in white)
         juce::Path foregroundArc;
         foregroundArc.addCentredArc(centreX, centreY, radius, radius, 0.0f, rotaryStartAngle, angle, true);
         g.setColour(dial_fore);
-        g.strokePath(foregroundArc, juce::PathStrokeType(thickness, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
+        g.strokePath(foregroundArc,
+                     juce::PathStrokeType(thickness, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
 
         // Pointer
         juce::Path p;
@@ -60,31 +61,27 @@ public:
         g.fillPath(p);
     }
 
-    void drawLinearSlider(
-        juce::Graphics& g,
-        int x, int y, int width, int height,
-        float sliderPos, float minSliderPos, float maxSliderPos,
-        juce::Slider::SliderStyle style, juce::Slider& s
-    ) override {
+    void drawLinearSlider(juce::Graphics& g, int x, int y, int width, int height, float sliderPos, float minSliderPos,
+                          float maxSliderPos, juce::Slider::SliderStyle style, juce::Slider& s) override {
         if (style == juce::Slider::SliderStyle::LinearBar) {
             g.fillAll(inactive_bg);
-            juce::Rectangle<int> bound{x,y,width,height};
+            juce::Rectangle<int> bound{x, y, width, height};
             g.setColour(orange_fore);
             g.fillRect(bound.removeFromLeft(static_cast<int>(sliderPos)));
-            juce::Rectangle<int> bound2{x,y,width,height};
+            juce::Rectangle<int> bound2{x, y, width, height};
             g.setColour(juce::Colours::black);
             g.setColour(juce::Colours::black);
             g.drawRect(bound2);
             // g.drawText(s.getTextFromValue(s.getValue()), bound2, juce::Justification::centred);
         }
         else {
-            juce::LookAndFeel_V4::drawLinearSlider(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style, s);
+            juce::LookAndFeel_V4::drawLinearSlider(g, x, y, width, height, sliderPos, minSliderPos, maxSliderPos, style,
+                                                   s);
         }
     }
 
     // Slider textbox
-    void drawLabel(juce::Graphics& g, juce::Label& label) override
-    {
+    void drawLabel(juce::Graphics& g, juce::Label& label) override {
         g.setColour(black_bg);
 
         juce::String text = label.getText();
@@ -95,13 +92,9 @@ public:
         g.drawFittedText(text, 0, 0, width, height, label.getJustificationType(), 1);
     }
 
-    void drawComboBox(
-        juce::Graphics& g,
-        int width, int height,
-        bool isButtonDown,
-        int buttonX, int buttonY, int buttonW, int buttonH,
-        juce::ComboBox& box) override {
-        juce::ignoreUnused(width,height,isButtonDown);
+    void drawComboBox(juce::Graphics& g, int width, int height, bool isButtonDown, int buttonX, int buttonY,
+                      int buttonW, int buttonH, juce::ComboBox& box) override {
+        juce::ignoreUnused(width, height, isButtonDown);
         g.fillAll(box.isEnabled() ? ui::light_green_bg : ui::green_bg);
         g.setColour(juce::Colours::black);
         g.drawRect(g.getClipBounds());
@@ -110,128 +103,109 @@ public:
     }
 
     void positionComboBoxText(juce::ComboBox& box, juce::Label& label) override {
-        label.setBounds(4, 1,
-                        box.getWidth() - 30,
-                        box.getHeight() - 2);
+        label.setBounds(4, 1, box.getWidth() - 30, box.getHeight() - 2);
 
-        label.setFont(getComboBoxFont (box));
+        label.setFont(getComboBoxFont(box));
     }
 
-    void drawPopupMenuBackground(
-        juce::Graphics& g,
-        int width,
-        int height
-    ) override {
-        juce::ignoreUnused(width,height);
+    void drawPopupMenuBackground(juce::Graphics& g, int width, int height) override {
+        juce::ignoreUnused(width, height);
         g.fillAll(ui::light_green_bg);
     }
 
-    void drawMenuBarItem(
-        juce::Graphics& g,
-        int width, int height,
-        int itemIndex, const juce::String& itemText,
-        bool isMouseOverItem, bool isMenuOpen,
-        bool /*isMouseOverBar*/, juce::MenuBarComponent& menuBar
-    ) override {
-        if (! menuBar.isEnabled())
-        {
+    void drawMenuBarItem(juce::Graphics& g, int width, int height, int itemIndex, const juce::String& itemText,
+                         bool isMouseOverItem, bool isMenuOpen, bool /*isMouseOverBar*/,
+                         juce::MenuBarComponent& menuBar) override {
+        if (!menuBar.isEnabled()) {
             g.setColour(ui::green_bg);
         }
-        else if (isMenuOpen || isMouseOverItem)
-        {
+        else if (isMenuOpen || isMouseOverItem) {
             g.fillAll(ui::light_green_bg);
             g.setColour(juce::Colours::black);
         }
-        else
-        {
-            g.setColour (juce::Colours::black);
+        else {
+            g.setColour(juce::Colours::black);
         }
 
-        g.setFont (getMenuBarFont (menuBar, itemIndex, itemText));
-        g.drawFittedText (itemText, 0, 0, width, height, juce::Justification::centredLeft, 1);
+        g.setFont(getMenuBarFont(menuBar, itemIndex, itemText));
+        g.drawFittedText(itemText, 0, 0, width, height, juce::Justification::centredLeft, 1);
     }
 
-    void drawPopupMenuItem(
-        juce::Graphics& g, const juce::Rectangle<int>& area,
-        const bool isSeparator, const bool isActive,
-        const bool isHighlighted, const bool isTicked,
-        const bool hasSubMenu, const juce::String& text,
-        const juce::String& shortcutKeyText,
-        const juce::Drawable* icon, const juce::Colour* const textColourToUse
-    ) override {
-        juce::ignoreUnused(isTicked,textColourToUse);
-        if (isSeparator)
-        {
-            auto r  = area.reduced (5, 0);
-            r.removeFromTop (juce::roundToInt (((float) r.getHeight() * 0.5f) - 0.5f));
+    void drawPopupMenuItem(juce::Graphics& g, const juce::Rectangle<int>& area, const bool isSeparator,
+                           const bool isActive, const bool isHighlighted, const bool isTicked, const bool hasSubMenu,
+                           const juce::String& text, const juce::String& shortcutKeyText, const juce::Drawable* icon,
+                           const juce::Colour* const textColourToUse) override {
+        // juce::ignoreUnused(isTicked,textColourToUse);
+        if (isSeparator) {
+            auto r = area.reduced(5, 0);
+            r.removeFromTop(juce::roundToInt(((float)r.getHeight() * 0.5f) - 0.5f));
 
-            g.setColour (juce::Colours::black);
-            g.fillRect (r.removeFromTop (1));
+            g.setColour(juce::Colours::black);
+            g.fillRect(r.removeFromTop(1));
         }
-        else
-        {
+        else {
             auto textColour = juce::Colours::black;
 
-            auto r  = area.reduced (1);
+            auto r = area.reduced(1);
 
-            if (isHighlighted && isActive)
-            {
-                g.setColour (orange_fore);
-                g.fillRect (r);
+            if (isHighlighted && isActive) {
+                g.setColour(orange_fore);
+                g.fillRect(r);
 
-                g.setColour (findColour (juce::PopupMenu::highlightedTextColourId));
+                g.setColour(findColour(juce::PopupMenu::highlightedTextColourId));
             }
-            else
-            {
-                g.setColour (textColour.withMultipliedAlpha (isActive ? 1.0f : 0.5f));
+            else {
+                g.setColour(textColour.withMultipliedAlpha(isActive ? 1.0f : 0.5f));
             }
 
-            r.reduce (juce::jmin (5, area.getWidth() / 20), 0);
+            r.reduce(juce::jmin(5, area.getWidth() / 20), 0);
 
             auto font = getPopupMenuFont();
 
-            auto maxFontHeight = (float) r.getHeight() / 1.3f;
+            auto maxFontHeight = (float)r.getHeight() / 1.3f;
 
-            if (font.getHeight() > maxFontHeight)
-                font.setHeight (maxFontHeight);
+            if (font.getHeight() > maxFontHeight) font.setHeight(maxFontHeight);
 
-            g.setFont (font);
+            g.setFont(font);
 
-            auto iconArea = r.removeFromLeft (juce::roundToInt (maxFontHeight)).toFloat();
+            auto iconArea = r.removeFromLeft(juce::roundToInt(maxFontHeight)).toFloat();
 
-            if (icon != nullptr)
-            {
-                icon->drawWithin (g, iconArea, juce::RectanglePlacement::centred | juce::RectanglePlacement::onlyReduceInSize, 1.0f);
-                r.removeFromLeft (juce::roundToInt (maxFontHeight * 0.5f));
+            if (icon != nullptr) {
+                icon->drawWithin(g, iconArea,
+                                 juce::RectanglePlacement::centred | juce::RectanglePlacement::onlyReduceInSize, 1.0f);
+                r.removeFromLeft(juce::roundToInt(maxFontHeight * 0.5f));
+            }
+            else if (isTicked) {
+                auto tick = getTickShape(1.0f);
+                g.fillPath(tick,
+                           tick.getTransformToScaleToFit(iconArea.reduced(iconArea.getWidth() / 5, 0).toFloat(), true));
             }
 
-            if (hasSubMenu)
-            {
+            if (hasSubMenu) {
                 auto arrowH = 0.6f * getPopupMenuFont().getAscent();
 
-                auto x = static_cast<float> (r.removeFromRight ((int) arrowH).getX());
-                auto halfH = static_cast<float> (r.getCentreY());
+                auto x = static_cast<float>(r.removeFromRight((int)arrowH).getX());
+                auto halfH = static_cast<float>(r.getCentreY());
 
                 juce::Path path;
-                path.startNewSubPath (x, halfH - arrowH * 0.5f);
-                path.lineTo (x + arrowH * 0.6f, halfH);
-                path.lineTo (x, halfH + arrowH * 0.5f);
+                path.startNewSubPath(x, halfH - arrowH * 0.5f);
+                path.lineTo(x + arrowH * 0.6f, halfH);
+                path.lineTo(x, halfH + arrowH * 0.5f);
 
-                g.strokePath (path, juce::PathStrokeType (2.0f));
+                g.strokePath(path, juce::PathStrokeType(2.0f));
             }
 
-            r.removeFromRight (3);
+            r.removeFromRight(3);
             g.setColour(juce::Colours::black);
-            g.drawFittedText (text, r, juce::Justification::centredLeft, 1);
+            g.drawFittedText(text, r, juce::Justification::centredLeft, 1);
 
-            if (shortcutKeyText.isNotEmpty())
-            {
+            if (shortcutKeyText.isNotEmpty()) {
                 auto f2 = font;
-                f2.setHeight (f2.getHeight() * 0.75f);
-                f2.setHorizontalScale (0.95f);
-                g.setFont (f2);
+                f2.setHeight(f2.getHeight() * 0.75f);
+                f2.setHorizontalScale(0.95f);
+                g.setFont(f2);
 
-                g.drawText (shortcutKeyText, r, juce::Justification::centredRight, true);
+                g.drawText(shortcutKeyText, r, juce::Justification::centredRight, true);
             }
         }
     }
@@ -240,16 +214,14 @@ public:
 class SliderMenu : public juce::Slider::MouseListener {
 public:
     SliderMenu(juce::Slider& slider)
-        : slider_(slider)
-    {}
+        : slider_(slider) {}
 
     void mouseDown(const juce::MouseEvent& e) override {
         std::ignore = e;
         juce::ModifierKeys keys = juce::ModifierKeys::getCurrentModifiers();
         if (keys.isPopupMenu()) {
             menu_.clear();
-            menu_.addItem("enter",
-            [ptr_component = this]{
+            menu_.addItem("enter", [ptr_component = this] {
                 auto* editor = new juce::TextEditor;
                 editor->setText(ptr_component->slider_.getTextFromValue(ptr_component->slider_.getValue()));
 
@@ -263,20 +235,17 @@ public:
                 auto* dialog = op.create();
                 editor->onReturnKey = [&slider = ptr_component->slider_, dialog, editor] {
                     slider.setValue(slider.getValueFromText(editor->getText()),
-                                juce::NotificationType::sendNotificationSync);
+                                    juce::NotificationType::sendNotificationSync);
                     dialog->userTriedToCloseWindow();
                 };
                 dialog->enterModalState(true, nullptr, true);
-                juce::MessageManager::callAsync([editor]{
+                juce::MessageManager::callAsync([editor] {
                     editor->grabKeyboardFocus();
                     editor->selectAll();
                 });
             });
 
-            menu_.addItem("reset",
-            [this] {
-                slider_.setValue(slider_.getDoubleClickReturnValue());
-            });
+            menu_.addItem("reset", [this] { slider_.setValue(slider_.getDoubleClickReturnValue()); });
 
             if (on_menu_showup) {
                 on_menu_showup(menu_);
@@ -288,9 +257,9 @@ public:
     }
 
     std::function<void(juce::PopupMenu&)> on_menu_showup;
+    juce::PopupMenu menu_;
 private:
     juce::Slider& slider_;
-    juce::PopupMenu menu_;
 };
 
 // ----------------------------------------
@@ -298,7 +267,8 @@ private:
 // ----------------------------------------
 class Dial : public juce::Component {
 public:
-    Dial() : Dial("unname") {}
+    Dial()
+        : Dial("unname") {}
 
     Dial(juce::StringRef title)
         : slider_menu_(slider) {
@@ -311,11 +281,14 @@ public:
         label.setJustificationType(juce::Justification::centredBottom);
         label.setColour(juce::Label::ColourIds::textColourId, juce::Colours::black);
         addAndMakeVisible(label);
+
+        slider_menu_.menu_.setLookAndFeel(&lookandfeel_);
     }
 
     ~Dial() override {
         slider.setLookAndFeel(nullptr);
         attach_ = nullptr;
+        slider_menu_.menu_.setLookAndFeel(nullptr);
     }
 
     void resized() override {
@@ -326,7 +299,7 @@ public:
         label.setBounds(top);
         slider.setBounds(b);
         slider.setTextBoxStyle(juce::Slider::TextBoxBelow, true,
-            static_cast<int>(static_cast<float>(getWidth()) * 0.9f), static_cast<int>(title_h));
+                               static_cast<int>(static_cast<float>(getWidth()) * 0.9f), static_cast<int>(title_h));
     }
 
     void BindParam(juce::AudioProcessorValueTreeState& apvts, juce::StringRef id) {
@@ -336,9 +309,7 @@ public:
     void BindParam(juce::RangedAudioParameter* param) {
         jassert(param != nullptr);
         attach_ = nullptr;
-        attach_ = std::make_unique<juce::SliderParameterAttachment>(
-            *param, slider
-        );
+        attach_ = std::make_unique<juce::SliderParameterAttachment>(*param, slider);
     }
 
     std::function<void(juce::PopupMenu&)>& OnMenuShowup() {
@@ -348,7 +319,7 @@ public:
     juce::Slider slider;
     juce::Label label; // dial title
 private:
-std::unique_ptr<juce::SliderParameterAttachment> attach_;
+    std::unique_ptr<juce::SliderParameterAttachment> attach_;
     SliderMenu slider_menu_;
     CustomLookAndFeel lookandfeel_;
 };
@@ -409,9 +380,7 @@ public:
     void BindParam(juce::RangedAudioParameter* param) {
         jassert(param != nullptr);
         attach_ = nullptr;
-        attach_ = std::make_unique<juce::SliderParameterAttachment>(
-            *param, slider
-        );
+        attach_ = std::make_unique<juce::SliderParameterAttachment>(*param, slider);
     }
 
     std::function<void(juce::PopupMenu&)>& OnMenuShowup() {
@@ -441,7 +410,8 @@ class CubeSelector : public juce::Component {
 public:
     class Cube : public juce::Component {
     public:
-        Cube(CubeSelector& parent) : parent_(parent) {}
+        Cube(CubeSelector& parent)
+            : parent_(parent) {}
         void paint(juce::Graphics& g) override {
             if (parent_.selecting_ == this) {
                 g.fillAll(ui::active_bg);
@@ -467,7 +437,8 @@ public:
         cubes_.clear();
     }
 
-    std::span<std::unique_ptr<Cube>> BindParam(juce::AudioProcessorValueTreeState& apvts, juce::StringRef id, bool add_choices) {
+    std::span<std::unique_ptr<Cube>> BindParam(juce::AudioProcessorValueTreeState& apvts, juce::StringRef id,
+                                               bool add_choices) {
         auto* param = apvts.getParameter(id);
         return BindParam(static_cast<juce::AudioParameterChoice*>(param), add_choices);
     }
@@ -476,10 +447,7 @@ public:
         jassert(param != nullptr);
         attach_ = nullptr;
         attach_ = std::make_unique<juce::ParameterAttachment>(
-            *param, [this](float v) {
-                OnValueChanged(static_cast<size_t>(v));
-            }
-        );
+            *param, [this](float v) { OnValueChanged(static_cast<size_t>(v)); });
 
         if (!add_choices) {
             return {};
@@ -584,19 +552,17 @@ public:
     void BindParam(juce::RangedAudioParameter* param) {
         jassert(param != nullptr);
         attach_ = nullptr;
-        attach_ = std::make_unique<juce::ButtonParameterAttachment>(
-            *param, *this
-        );
+        attach_ = std::make_unique<juce::ButtonParameterAttachment>(*param, *this);
     }
 
     void paint(juce::Graphics& g) override {
-        auto color = getToggleState() ? juce::Colour{198,205,0} : juce::Colour{119,133,146};
+        auto color = getToggleState() ? juce::Colour{198, 205, 0} : juce::Colour{119, 133, 146};
         auto b = getLocalBounds();
         g.setColour(color);
         g.fillRect(b);
         g.setColour(juce::Colours::black);
         g.drawRect(b);
-        g.drawText(getToggleState() ? on_text_: off_text_, b, juce::Justification::centred);
+        g.drawText(getToggleState() ? on_text_ : off_text_, b, juce::Justification::centred);
     }
 private:
     juce::String on_text_;
@@ -673,4 +639,4 @@ static void SetLableBlack(juce::Label& lable) {
     lable.setColour(juce::Label::ColourIds::textColourId, black_bg);
 }
 
-}
+} // namespace ui

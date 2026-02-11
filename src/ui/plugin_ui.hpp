@@ -1,7 +1,7 @@
 #pragma once
-
 #include "pluginshared/component.hpp"
 #include "pluginshared/preset_panel.hpp"
+#include "pluginshared/bpm_sync_ui.hpp"
 
 class EmptyAudioProcessor;
 
@@ -26,6 +26,6 @@ private:
     ui::Dial pitch_{"pitch"};
     ui::Dial phase_{"phase"};
     ui::Dial morph_{"morph"};
-    ui::Dial freq_{"freq"};
+    ui::BpmSyncDial freq_{"freq"};
     ui::Switch phasy_{"phasy"};
 };

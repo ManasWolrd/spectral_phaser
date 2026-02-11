@@ -34,11 +34,17 @@ EmptyAudioProcessor::EmptyAudioProcessor()
             layout.add(std::move(p));
         }
         {
-            auto p = std::make_unique<juce::AudioParameterFloat>(
-                juce::ParameterID{"freq" + i_str, 1}, "freq" + i_str,
-                juce::NormalisableRange<float>{-10.0f, 10.0f, 0.01f, 0.4f, true}, 0.0f);
-            param_listener_.Add(p, [this, idx = i](float v) { dsp_.GetLayer(idx).barber_freq = v; });
-            layout.add(std::move(p));
+            // auto p = std::make_unique<juce::AudioParameterFloat>(
+            //     juce::ParameterID{"freq" + i_str, 1}, "freq" + i_str,
+            //     juce::NormalisableRange<float>{-10.0f, 10.0f, 0.01f, 0.4f, true}, 0.0f);
+            // param_listener_.Add(p, [this, idx = i](float v) { dsp_.GetLayer(idx).barber_freq = v; });
+            // layout.add(std::move(p));
+            auto p = layer_lfo_[i].Build(
+                "freq" + i_str,
+                -10.0f, 10.0f, 0.01f, 0.4f, true,
+                "-1/64", "1/64"
+            );
+            layout.add(std::move(p.first), std::move(p.second));
         }
         {
             auto p = std::make_unique<juce::AudioParameterBool>(juce::ParameterID{"enable" + i_str, 1},
@@ -167,6 +173,13 @@ void EmptyAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::M
     size_t const num_samples = static_cast<size_t>(buffer.getNumSamples());
     float* left_ptr = buffer.getWritePointer(0);
     float* right_ptr = buffer.getWritePointer(1);
+
+    for (size_t i = 0; i < phaser::SpectralPhaser::kNumLayers; ++i) {
+        auto& layer = dsp_.GetLayer(i);
+        auto lfo = layer_lfo_[i].SyncBpm(getPlayHead(), layer.GetLfoPhase());
+        layer.barber_freq = lfo.lfo_freq;
+        layer.SetLfoPhase(lfo.lfo_phase);
+    }
 
     dsp_.Update();
     dsp_.Process(left_ptr, right_ptr, num_samples);

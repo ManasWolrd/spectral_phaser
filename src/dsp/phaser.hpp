@@ -39,6 +39,14 @@ public:
         barber_phase_ -= std::floor(barber_phase_);
     }
 
+    float GetLfoPhase() const noexcept {
+        return barber_phase_;
+    }
+
+    void SetLfoPhase(float p) noexcept {
+        barber_phase_ = p;
+    }
+
     float pitch{};
     float morph{};
     float phase{};

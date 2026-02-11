@@ -37,8 +37,7 @@ EmptyAudioProcessorEditor::EmptyAudioProcessorEditor(EmptyAudioProcessor& p)
     setResizeLimits(ui_.kWidth, ui_.kHeight, 9999, 9999);
 }
 
-EmptyAudioProcessorEditor::~EmptyAudioProcessorEditor() {
-}
+EmptyAudioProcessorEditor::~EmptyAudioProcessorEditor() {}
 
 //==============================================================================
 void EmptyAudioProcessorEditor::paint(juce::Graphics& g) {

@@ -61,5 +61,5 @@ void PluginUi::OnLayerSelect(size_t i) {
     pitch_.BindParam(*processor_.value_tree_, "pitch" + juce::String{i});
     phase_.BindParam(*processor_.value_tree_, "phase" + juce::String{i});
     morph_.BindParam(*processor_.value_tree_, "morph" + juce::String{i});
-    freq_.BindParam(*processor_.value_tree_, "freq" + juce::String{i});
+    freq_.BindParam(processor_.layer_lfo_[i]);
 }

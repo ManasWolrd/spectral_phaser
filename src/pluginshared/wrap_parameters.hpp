@@ -1,6 +1,5 @@
 #pragma once
 #include <juce_audio_processors/juce_audio_processors.h>
-#include "bpm_sync_lfo.hpp"
 
 namespace pluginshared {
 // -------------------- warpper of juce parameters --------------------
@@ -39,60 +38,6 @@ public:
     juce::String name_;
     juce::NormalisableRange<float> range_;
     float default_value_;
-};
-
-template<bool kNegPos>
-class BpmSyncFreqParam {
-public:
-    using LFOSyncType = typename pluginshared::BpmSyncLFO<kNegPos>::LFOTempoType;
-
-    BpmSyncFreqParam(
-        juce::StringRef name,
-        juce::NormalisableRange<float> range,
-        float default_hz_value,
-        LFOSyncType default_lfo_tempo_type,
-        juce::StringRef default_lfo_tempo_speed)
-        : freq_(name, range, default_hz_value)
-        , default_lfo_tempo_type_(default_lfo_tempo_type)
-        , default_lfo_tempo_(default_lfo_tempo_speed) {
-    }
-
-    std::unique_ptr<juce::AudioParameterFloat> Build1() {
-        jassert(freq_.ptr_ == nullptr);
-        auto p = freq_.Build();
-        state_.param_lfo_hz_ = p.get();
-        return p;
-    }
-    std::unique_ptr<juce::AudioParameterInt> Build2() {
-        jassert(state_.param_lfo_tempo_type_ == nullptr);
-        auto p = state_.MakeLfoTempoTypeParam(freq_.name_ + "_tt", default_lfo_tempo_type_);
-        state_.param_lfo_tempo_type_ = p.get();
-        return p;
-    }
-    std::unique_ptr<juce::AudioParameterChoice> Build3() {
-        jassert(state_.param_tempo_speed_ == nullptr);
-        auto p = state_.MakeLfoTempoSpeedParam(freq_.name_ + "_ts", default_lfo_tempo_);
-        state_.param_tempo_speed_ = p.get();
-        return p;
-    }
-
-    float Get() noexcept {
-        return state_.GetLfoFreq();
-    }
-
-    juce::AudioProcessorValueTreeState::ParameterLayout& operator+=(
-        juce::AudioProcessorValueTreeState::ParameterLayout& layout
-    ) {
-        layout.add(Build1());
-        layout.add(Build2());
-        layout.add(Build3());
-        return layout;
-    }
-
-    FloatParam freq_;
-    pluginshared::BpmSyncLFO<kNegPos> state_;
-    LFOSyncType default_lfo_tempo_type_;
-    juce::StringRef default_lfo_tempo_;
 };
 
 class ChoiceParam {
@@ -176,18 +121,6 @@ inline juce::AudioProcessorValueTreeState::ParameterLayout& operator+=(juce::Aud
 }
 inline juce::AudioProcessorValueTreeState::ParameterLayout& operator+=(juce::AudioProcessorValueTreeState::ParameterLayout& layout, BoolParam& f) {
     layout.add(f.Build());
-    return layout;
-}
-inline juce::AudioProcessorValueTreeState::ParameterLayout& operator+=(juce::AudioProcessorValueTreeState::ParameterLayout& layout, BpmSyncFreqParam<true>& f) {
-    layout.add(f.Build1());
-    layout.add(f.Build2());
-    layout.add(f.Build3());
-    return layout;
-}
-inline juce::AudioProcessorValueTreeState::ParameterLayout& operator+=(juce::AudioProcessorValueTreeState::ParameterLayout& layout, BpmSyncFreqParam<false>& f) {
-    layout.add(f.Build1());
-    layout.add(f.Build2());
-    layout.add(f.Build3());
     return layout;
 }
 }

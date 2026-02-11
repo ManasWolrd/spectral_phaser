@@ -2,6 +2,7 @@
 #include "pluginshared/juce_param_listener.hpp"
 #include "pluginshared/preset_manager.hpp"
 #include "pluginshared/wrap_parameters.hpp"
+#include "pluginshared/bpm_sync_lfo.hpp"
 
 #include "dsp/phaser.hpp"
 
@@ -49,6 +50,7 @@ public:
     std::unique_ptr<pluginshared::PresetManager> preset_manager_;
 
     phaser::SpectralPhaser dsp_;
+    pluginshared::BpmSyncLFO layer_lfo_[phaser::SpectralPhaser::kNumLayers];
 private:
     //==============================================================================
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(EmptyAudioProcessor)
