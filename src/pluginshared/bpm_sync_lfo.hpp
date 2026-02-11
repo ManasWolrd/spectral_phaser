@@ -131,7 +131,7 @@ public:
         param_type = ptype.get();
 
         auto attr =
-            juce::AudioParameterFloatAttributes{}.withStringFromValueFunction([this](auto x, auto) -> juce::String {
+            juce::AudioParameterFloatAttributes{}.withStringFromValueFunction([this, float_numeric = GetFloatNumericText(free_freq_range_.interval)](auto x, auto) -> juce::String {
                 FreqAttrubute freq_attr = GetFreqAttribute();
                 if (freq_attr.tempo_sync) {
                     int index = static_cast<int>(std::lerp(static_cast<float>(tempo_begin_idx_),
@@ -140,7 +140,7 @@ public:
                     return s_rate_name_table[static_cast<size_t>(index)];
                 }
                 else {
-                    return juce::String{free_freq_range_.convertFrom0to1(x)};
+                    return juce::String{free_freq_range_.convertFrom0to1(x), float_numeric};
                 }
             });
         auto pfreq = std::make_unique<juce::AudioParameterFloat>(juce::ParameterID{name_ + "_freq", 1}, name_ + "_freq",
@@ -177,6 +177,16 @@ public:
     juce::AudioParameterFloat* param_freq{};
     juce::AudioParameterInt* param_type{};
 private:
+    static int GetFloatNumericText(float interval) {
+        float v = 1.0f;
+        int num = 0;
+        while (v > interval) {
+            v /= 10.0f;
+            ++num;
+        }
+        return num;
+    }
+
     juce::String name_;
     juce::NormalisableRange<float> free_freq_range_;
     int tempo_begin_idx_;
